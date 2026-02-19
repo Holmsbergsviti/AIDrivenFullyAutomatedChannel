@@ -22,7 +22,7 @@ TIMEZONE = os.getenv("TIMEZONE", "UTC")
 
 # Image Generation
 USE_DALLE = os.getenv("USE_DALLE", "false").lower() == "true"
-USE_UNSPLASH = os.getenv("USE_UNSPLASH", "true").lower() == "true"
+USE_UNSPLASH = os.getenv("USE_UNSPLASH", "false").lower() == "true"
 UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_ACCESS_KEY", "")
 
 # Free AI Services
