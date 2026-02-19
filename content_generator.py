@@ -11,6 +11,7 @@ from typing import Tuple, Optional
 from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
 import logging
+import random
 
 from config import (
     OPENAI_API_KEY, GROQ_API_KEY, CHANNEL_TOPIC, 
@@ -119,6 +120,26 @@ Recent examples of your tone:
 "Ownership is becoming abstract. You don't own software — you subscribe. Access replaces possession."
 
 Generate a post about a signal or change in: {self.topic}
+Make it feel like you noticed something important that nobody talks about yet.
+For {time_of_day}."""
+            
+            response = client.chat.completions.create(
+                model="mixtral-8x7b-32768",
+                messages=[
+                    {"role": "system", "content": "You are a keen observer of emerging patterns and quiet changes in the world. You write sharp, layered posts that make people think differently about what's already happening."},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=200,
+                temperature=0.9
+            )
+            
+            post_text = response.choices[0].message.content.strip()
+            return post_text
+            
+        except Exception as e:
+            logger.error(f"Groq error: {e}")
+            return self._generate_fallback_post(time_of_day)
+    
     def _generate_fallback_post(self, time_of_day: str) -> str:
         """Fallback posts if APIs fail - matches channel style"""
         fallback_posts = {
@@ -132,30 +153,9 @@ Generate a post about a signal or change in: {self.topic}
                 f"Connection costs nothing now.\nExcept attention.\nExcept time.\nExcept knowing who's listening.\n\nFree has always had a price.\nThe price is just harder to see.",
                 f"Systems don't fail dramatically.\nThey fade.\n\nService gets slower.\nFeatures disappear.\nSupport stops responding.\n\nIt's not a crash—\nit's a quiet withdrawal.\n\nAnd quiet is harder to protest.",
             ]
-        }   post_text = response.choices[0].message.content.strip()
-            return post_text
-            
-        except Exception as e:
-            logger.error(f"Groq error: {e}")
-            return self._generate_fallback_post(time_of_day)
-    
-    def _generate_fallback_post(self, time_of_day: str) -> str:
-        """Fallback posts if APIs fail"""
-        fallback_posts = {
-            "morning": [
-                f"🌅 Good morning! Today's insight about {self.topic}:\nStay tuned for more fascinating updates throughout the day!",
-                f"☀️ Rise and shine! Here's your daily dose of {self.topic}.\nLet's make today amazing!",
-                f"🌟 Morning vibes! Exploring today's trending aspects of {self.topic}.\nDon't miss out!",
-            ],
-            "evening": [
-                f"🌙 Evening reflection: Today's most compelling {self.topic} moments.\nWhat caught your eye?",
-                f"🌅 As the day winds down, here's what you need to know about {self.topic}.\nSee you tomorrow!",
-                f"💫 Night time thoughts on {self.topic}. Goodnight and sweet dreams!",
-            ]
         }
         
         posts = fallback_posts.get(time_of_day, fallback_posts["morning"])
-        import random
         return random.choice(posts)
     
     def generate_image(self, post_text: str) -> Optional[str]:
@@ -181,7 +181,6 @@ Generate a post about a signal or change in: {self.topic}
             from openai import OpenAI
             client = OpenAI(api_key=OPENAI_API_KEY)
             
-            # Extract topic from post for image prompt
             prompt = f"Create an eye-catching, professional image related to: {self.topic}. Make it vibrant and engaging for social media."
             
             response = client.images.generate(
@@ -210,7 +209,6 @@ Generate a post about a signal or change in: {self.topic}
     def _fetch_from_unsplash(self, post_text: str) -> Optional[str]:
         """Fetch free images from Unsplash API"""
         try:
-            # Extract keywords from topic
             keywords = self.topic.replace(" ", "+")
             
             url = "https://api.unsplash.com/photos/random"
@@ -245,12 +243,10 @@ Generate a post about a signal or change in: {self.topic}
     def _create_simple_image(self, post_text: str) -> str:
         """Create a simple but attractive image with text"""
         try:
-            # Create image with gradient-like effect
             width, height = 1024, 1024
-            img = Image.new("RGB", (width, height), color=(15, 23, 42))  # Dark blue background
+            img = Image.new("RGB", (width, height), color=(15, 23, 42))
             draw = ImageDraw.Draw(img)
             
-            # Try to use a nice font, fallback to default
             try:
                 title_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 60)
                 text_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 36)
@@ -258,23 +254,16 @@ Generate a post about a signal or change in: {self.topic}
                 title_font = ImageFont.load_default()
                 text_font = ImageFont.load_default()
             
-            # Extract first line as title
             lines = post_text.split("\n")
             title = lines[0][:40] if lines else self.topic
             
-            # Draw decorative elements
             draw.rectangle([(50, 50), (974, 974)], outline=(100, 150, 255), width=5)
             draw.ellipse([(100, 100), (300, 300)], outline=(100, 150, 255), width=2)
             draw.ellipse([(724, 724), (924, 924)], outline=(100, 150, 255), width=2)
             
-            # Draw title
             draw.text((100, 200), title, fill=(100, 200, 255), font=title_font)
-            
-            # Draw topic
-            draw.text((100, 400), f"📌 {self.topic}", fill=(200, 220, 255), font=text_font)
-            
-            # Draw AI indicator
-            draw.text((100, 700), "✨ AI-Driven Channel", fill=(150, 255, 200), font=text_font)
+            draw.text((100, 400), f"📡 {self.topic}", fill=(200, 220, 255), font=text_font)
+            draw.text((100, 700), "Signals of Future", fill=(150, 255, 200), font=text_font)
             
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             image_path = os.path.join(IMAGES_DIR, f"generated_{timestamp}.png")
