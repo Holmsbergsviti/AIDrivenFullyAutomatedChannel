@@ -1,0 +1,9 @@
+runtime.txt
+*.pyc
+__pycache__/
+.env
+.DS_Store
+generated_images/
+logs/
+*.log
+.git/
