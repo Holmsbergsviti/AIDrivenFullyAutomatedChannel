@@ -52,8 +52,8 @@ class ContentGenerator:
             client = OpenAI(api_key=OPENAI_API_KEY)
             
             prompt = f"""Generate a clear, eye-catching, engaging and not very long post about '{self.topic}' 
-for a Telegram channel at {time_of_day}. Make it human-like but also state that this is an AI-driven channel.
-Keep it under 300 characters. Make it interesting and relevant to current trends."""
+for a Telegram channel at {time_of_day}. Make it human-like and interesting.
+Keep it under 300 characters. Make it relevant to current trends."""
             
             response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
@@ -66,7 +66,6 @@ Keep it under 300 characters. Make it interesting and relevant to current trends
             )
             
             post_text = response.choices[0].message.content.strip()
-            post_text += "\n\n✨ AI-Driven Channel"
             return post_text
             
         except Exception as e:
@@ -94,7 +93,6 @@ Keep it under 300 characters. Make it interesting and relevant to current trends
             )
             
             post_text = response.choices[0].message.content.strip()
-            post_text += "\n\n✨ AI-Driven Channel"
             return post_text
             
         except Exception as e:
@@ -105,14 +103,14 @@ Keep it under 300 characters. Make it interesting and relevant to current trends
         """Fallback posts if APIs fail"""
         fallback_posts = {
             "morning": [
-                f"🌅 Good morning! Today's insight about {self.topic}:\nStay tuned for more fascinating updates throughout the day!\n\n✨ AI-Driven Channel",
-                f"☀️ Rise and shine! Here's your daily dose of {self.topic}.\nLet's make today amazing!\n\n✨ AI-Driven Channel",
-                f"🌟 Morning vibes! Exploring today's trending aspects of {self.topic}.\nDon't miss out!\n\n✨ AI-Driven Channel",
+                f"🌅 Good morning! Today's insight about {self.topic}:\nStay tuned for more fascinating updates throughout the day!",
+                f"☀️ Rise and shine! Here's your daily dose of {self.topic}.\nLet's make today amazing!",
+                f"🌟 Morning vibes! Exploring today's trending aspects of {self.topic}.\nDon't miss out!",
             ],
             "evening": [
-                f"🌙 Evening reflection: Today's most compelling {self.topic} moments.\nWhat caught your eye?\n\n✨ AI-Driven Channel",
-                f"🌅 As the day winds down, here's what you need to know about {self.topic}.\nSee you tomorrow!\n\n✨ AI-Driven Channel",
-                f"💫 Night time thoughts on {self.topic}. Goodnight and sweet dreams!\n\n✨ AI-Driven Channel",
+                f"🌙 Evening reflection: Today's most compelling {self.topic} moments.\nWhat caught your eye?",
+                f"🌅 As the day winds down, here's what you need to know about {self.topic}.\nSee you tomorrow!",
+                f"💫 Night time thoughts on {self.topic}. Goodnight and sweet dreams!",
             ]
         }
         
