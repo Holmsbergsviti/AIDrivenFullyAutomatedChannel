@@ -30,29 +30,41 @@ class TelegramPoster:
         """
         try:
             if image_path:
+                logger.info(f"📸 Attempting to send photo from {image_path}")
                 with open(image_path, "rb") as photo:
-                    await self.bot.send_photo(
+                    result = await self.bot.send_photo(
                         chat_id=self.channel_id,
                         photo=photo,
-                        caption=text,
-                        parse_mode="HTML"
+                        caption=text
                     )
-                logger.info(f"Posted message with image to {self.channel_id}")
+                logger.info(f"✅ Posted photo message to {self.channel_id} (message ID: {result.message_id})")
             else:
-                await self.bot.send_message(
+                logger.info(f"📝 Attempting to send text message")
+                result = await self.bot.send_message(
                     chat_id=self.channel_id,
-                    text=text,
-                    parse_mode="HTML"
+                    text=text
                 )
-                logger.info(f"Posted text message to {self.channel_id}")
+                logger.info(f"✅ Posted text message to {self.channel_id} (message ID: {result.message_id})")
             
             return True
             
+        except FileNotFoundError as e:
+            logger.error(f"❌ Image file not found: {image_path} - {e}")
+            # Try posting text-only if image is missing
+            try:
+                await self.bot.send_message(chat_id=self.channel_id, text=text)
+                logger.info(f"✅ Posted text-only fallback")
+                return True
+            except Exception as e2:
+                logger.error(f"❌ Fallback also failed: {e2}")
+                return False
         except TelegramError as e:
-            logger.error(f"Telegram error: {e}")
+            logger.error(f"❌ Telegram error: {e}")
             return False
         except Exception as e:
-            logger.error(f"Unexpected error while posting: {e}")
+            logger.error(f"❌ Unexpected error while posting: {e}")
+            import traceback
+            logger.error(traceback.format_exc())
             return False
     
     async def verify_connection(self) -> bool:

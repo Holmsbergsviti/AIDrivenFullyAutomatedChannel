@@ -84,7 +84,7 @@ Start with a minimal, fitting emoji then the content."""
                     {"role": "system", "content": "You are a keen observer of emerging patterns and quiet changes in the world. You write sharp, layered posts that make people think differently about what's already happening."},
                     {"role": "user", "content": prompt}
                 ],
-                max_tokens=200,
+                max_tokens=300,
                 temperature=0.9
             )
             
@@ -133,7 +133,7 @@ Start with a minimal, fitting emoji then the content."""
                     {"role": "system", "content": "You are a keen observer of emerging patterns and quiet changes in the world. You write sharp, layered posts that make people think differently about what's already happening."},
                     {"role": "user", "content": prompt}
                 ],
-                max_tokens=200,
+                max_tokens=300,
                 temperature=0.9
             )
             
@@ -172,11 +172,15 @@ Start with a minimal, fitting emoji then the content."""
         Returns:
             Path to the generated image
         """
+        logger.info(f"generate_image called: USE_DALLE={USE_DALLE}, USE_UNSPLASH={USE_UNSPLASH}")
         if USE_DALLE and OPENAI_API_KEY:
+            logger.info("Using DALL-E for image generation")
             return self._generate_with_dalle(post_text)
         elif USE_UNSPLASH:
+            logger.info("Using Unsplash for image fetching")
             return self._fetch_from_unsplash(post_text)
         else:
+            logger.info("Using simple image generation (fallback)")
             return self._create_simple_image(post_text)
     
     def _generate_with_dalle(self, post_text: str) -> Optional[str]:
