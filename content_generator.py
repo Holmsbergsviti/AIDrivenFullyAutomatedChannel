@@ -64,6 +64,7 @@ Your style:
 - Mix concrete examples with abstract thinking
 - Ends with a thought about what's changing, not a call to action
 - 150-250 words, well-structured with short paragraphs/lines
+- Use minimal, lively emojis at the start (1-2): 📡 🔇 🔮 ∞ ⚖️ 🪫 etc - not cringe, minimalist
 
 Recent examples of your tone:
 "Modern wars aren't fought just on the ground anymore. They're fought in feeds, systems, and supply chains. Drones decide before soldiers arrive. Narratives spread faster than troops."
@@ -74,7 +75,8 @@ Recent examples of your tone:
 
 Generate a post about a signal or change in: {self.topic}
 Make it feel like you noticed something important that nobody talks about yet.
-For {time_of_day}."""
+For {time_of_day}.
+Start with a minimal, fitting emoji then the content."""
             
             response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
@@ -111,6 +113,7 @@ Your style:
 - Mix concrete examples with abstract thinking
 - Ends with a thought about what's changing, not a call to action
 - 150-250 words, well-structured with short paragraphs/lines
+- Use minimal, lively emojis at the start (1-2): 📡 🔇 🔮 ∞ ⚖️ 🪫 etc - not cringe, minimalist
 
 Recent examples of your tone:
 "Modern wars aren't fought just on the ground anymore. They're fought in feeds, systems, and supply chains. Drones decide before soldiers arrive. Narratives spread faster than troops."
@@ -121,7 +124,8 @@ Recent examples of your tone:
 
 Generate a post about a signal or change in: {self.topic}
 Make it feel like you noticed something important that nobody talks about yet.
-For {time_of_day}."""
+For {time_of_day}.
+Start with a minimal, fitting emoji then the content."""
             
             response = client.chat.completions.create(
                 model="mixtral-8x7b-32768",
@@ -144,14 +148,14 @@ For {time_of_day}."""
         """Fallback posts if APIs fail - matches channel style"""
         fallback_posts = {
             "morning": [
-                f"Data isn't neutral.\nAlgorithms aren't objective.\nYet we treat both like facts.\n\nThe signal: Infrastructure shapes belief.\nAnd belief shapes what we build next.",
-                f"Power used to announce itself loudly.\nNow it whispers through defaults.\n\nDefault settings.\nDefault recommendations.\nDefault assumptions.\n\nThe future isn't about force—\nit's about what stays invisible.",
-                f"Everything is becoming predictable.\nExcept prediction itself.\n\nThe more we optimize,\nthe fewer surprises remain.\nBut systems that can't surprise\nbecome systems we stop trusting.\n\nWhat happens when certainty feels suspicious?",
+                f"📡 Data isn't neutral.\nAlgorithms aren't objective.\nYet we treat both like facts.\n\nThe signal: Infrastructure shapes belief.\nAnd belief shapes what we build next.",
+                f"🔇 Power used to announce itself loudly.\nNow it whispers through defaults.\n\nDefault settings.\nDefault recommendations.\nDefault assumptions.\n\nThe future isn't about force—\nit's about what stays invisible.",
+                f"∞ Everything is becoming predictable.\nExcept prediction itself.\n\nThe more we optimize,\nthe fewer surprises remain.\nBut systems that can't surprise\nbecome systems we stop trusting.\n\nWhat happens when certainty feels suspicious?",
             ],
             "evening": [
-                f"We talk about the future.\nBut we live in someone else's present.\n\nTheir infrastructure.\nTheir incentives.\nTheir rules.\n\nThe signal isn't technology—\nit's choice becoming invisible.",
-                f"Connection costs nothing now.\nExcept attention.\nExcept time.\nExcept knowing who's listening.\n\nFree has always had a price.\nThe price is just harder to see.",
-                f"Systems don't fail dramatically.\nThey fade.\n\nService gets slower.\nFeatures disappear.\nSupport stops responding.\n\nIt's not a crash—\nit's a quiet withdrawal.\n\nAnd quiet is harder to protest.",
+                f"🔮 We talk about the future.\nBut we live in someone else's present.\n\nTheir infrastructure.\nTheir incentives.\nTheir rules.\n\nThe signal isn't technology—\nit's choice becoming invisible.",
+                f"🪫 Connection costs nothing now.\nExcept attention.\nExcept time.\nExcept knowing who's listening.\n\nFree has always had a price.\nThe price is just harder to see.",
+                f"⚖️ Systems don't fail dramatically.\nThey fade.\n\nService gets slower.\nFeatures disappear.\nSupport stops responding.\n\nIt's not a crash—\nit's a quiet withdrawal.\n\nAnd quiet is harder to protest.",
             ]
         }
         
@@ -243,6 +247,7 @@ For {time_of_day}."""
     def _create_simple_image(self, post_text: str) -> str:
         """Create a simple but attractive image with text"""
         try:
+            logger.info("Creating simple image...")
             width, height = 1024, 1024
             img = Image.new("RGB", (width, height), color=(15, 23, 42))
             draw = ImageDraw.Draw(img)
@@ -263,17 +268,19 @@ For {time_of_day}."""
             
             draw.text((100, 200), title, fill=(100, 200, 255), font=title_font)
             draw.text((100, 400), f"📡 {self.topic}", fill=(200, 220, 255), font=text_font)
-            draw.text((100, 700), "Signals of Future", fill=(150, 255, 200), font=text_font)
+            draw.text((100, 700), "Signals", fill=(150, 255, 200), font=text_font)
             
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             image_path = os.path.join(IMAGES_DIR, f"generated_{timestamp}.png")
             img.save(image_path)
             
-            logger.info(f"Simple image created: {image_path}")
+            logger.info(f"✅ Image created successfully: {image_path}")
             return image_path
             
         except Exception as e:
-            logger.error(f"Image creation error: {e}")
+            logger.error(f"❌ Image creation error: {e}")
+            import traceback
+            logger.error(traceback.format_exc())
             return None
 
 

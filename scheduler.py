@@ -53,14 +53,20 @@ class PostScheduler:
             post_text = self.content_gen.generate_post_text(time_of_day)
             logger.info(f"Generated post: {post_text[:100]}...")
             
-            # Generate or fetch image
+            # Generate or fetch image (with timeout to avoid hanging)
+            logger.info("Generating image...")
             image_path = self.content_gen.generate_image(post_text)
+            
+            if image_path:
+                logger.info(f"Image generated: {image_path}")
+            else:
+                logger.warning("Image generation failed, posting text only")
             
             # Post to Telegram
             success = await self.telegram.post_message(post_text, image_path)
             
             if success:
-                logger.info(f"Successfully posted {time_of_day} content")
+                logger.info(f"Successfully posted {time_of_day} content with {'image' if image_path else 'text only'}")
                 return True
             else:
                 logger.error(f"Failed to post {time_of_day} content")
