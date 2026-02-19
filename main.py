@@ -26,7 +26,9 @@ logger = logging.getLogger(__name__)
 
 # Import scheduler
 from scheduler import get_scheduler
-from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHANNEL_ID, OPENAI_API_KEY
+from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHANNEL_ID, OPENAI_API_KEY, USE_UNSPLASH, USE_DALLE
+
+logger.info(f"Configuration: USE_UNSPLASH={USE_UNSPLASH}, USE_DALLE={USE_DALLE}")
 
 
 def validate_configuration():
