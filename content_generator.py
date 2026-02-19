@@ -51,18 +51,38 @@ class ContentGenerator:
             from openai import OpenAI
             client = OpenAI(api_key=OPENAI_API_KEY)
             
-            prompt = f"""Generate a clear, eye-catching, engaging and not very long post about '{self.topic}' 
-for a Telegram channel at {time_of_day}. Make it human-like and interesting.
-Keep it under 300 characters. Make it relevant to current trends."""
+            prompt = f"""You are writing for "Signals of the Future" - a Telegram channel about quiet, emerging changes in technology, society, behavior, money, and internet culture.
+
+Your style:
+- Observational, not preachy
+- Layered and philosophically curious
+- Notice patterns others miss
+- Short, sharp insights that build
+- Use metaphors (wars as narratives, silence as strategy, etc)
+- Question assumptions about the future
+- Mix concrete examples with abstract thinking
+- Ends with a thought about what's changing, not a call to action
+- 150-250 words, well-structured with short paragraphs/lines
+
+Recent examples of your tone:
+"Modern wars aren't fought just on the ground anymore. They're fought in feeds, systems, and supply chains. Drones decide before soldiers arrive. Narratives spread faster than troops."
+
+"Silence is becoming a strategy. Governments pause instead of announce. Companies delay instead of deny."
+
+"Ownership is becoming abstract. You don't own software — you subscribe. Access replaces possession."
+
+Generate a post about a signal or change in: {self.topic}
+Make it feel like you noticed something important that nobody talks about yet.
+For {time_of_day}."""
             
             response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
-                    {"role": "system", "content": "You are a creative social media expert writing for a Telegram channel."},
+                    {"role": "system", "content": "You are a keen observer of emerging patterns and quiet changes in the world. You write sharp, layered posts that make people think differently about what's already happening."},
                     {"role": "user", "content": prompt}
                 ],
-                max_tokens=150,
-                temperature=0.8
+                max_tokens=200,
+                temperature=0.9
             )
             
             post_text = response.choices[0].message.content.strip()
@@ -78,21 +98,41 @@ Keep it under 300 characters. Make it relevant to current trends."""
             from groq import Groq
             client = Groq(api_key=GROQ_API_KEY)
             
-            prompt = f"""Generate a clear, eye-catching, engaging and not very long post about '{self.topic}' 
-for a Telegram channel at {time_of_day}. Make it human-like but also state that this is an AI-driven channel.
-Keep it under 300 characters. Make it interesting and relevant to current trends."""
-            
-            response = client.chat.completions.create(
-                model="mixtral-8x7b-32768",
-                messages=[
-                    {"role": "system", "content": "You are a creative social media expert writing for a Telegram channel."},
-                    {"role": "user", "content": prompt}
-                ],
-                max_tokens=150,
-                temperature=0.8
-            )
-            
-            post_text = response.choices[0].message.content.strip()
+            prompt = f"""You are writing for "Signals of the Future" - a Telegram channel about quiet, emerging changes in technology, society, behavior, money, and internet culture.
+
+Your style:
+- Observational, not preachy
+- Layered and philosophically curious
+- Notice patterns others miss
+- Short, sharp insights that build
+- Use metaphors (wars as narratives, silence as strategy, etc)
+- Question assumptions about the future
+- Mix concrete examples with abstract thinking
+- Ends with a thought about what's changing, not a call to action
+- 150-250 words, well-structured with short paragraphs/lines
+
+Recent examples of your tone:
+"Modern wars aren't fought just on the ground anymore. They're fought in feeds, systems, and supply chains. Drones decide before soldiers arrive. Narratives spread faster than troops."
+
+"Silence is becoming a strategy. Governments pause instead of announce. Companies delay instead of deny."
+
+"Ownership is becoming abstract. You don't own software — you subscribe. Access replaces possession."
+
+Generate a post about a signal or change in: {self.topic}
+    def _generate_fallback_post(self, time_of_day: str) -> str:
+        """Fallback posts if APIs fail - matches channel style"""
+        fallback_posts = {
+            "morning": [
+                f"Data isn't neutral.\nAlgorithms aren't objective.\nYet we treat both like facts.\n\nThe signal: Infrastructure shapes belief.\nAnd belief shapes what we build next.",
+                f"Power used to announce itself loudly.\nNow it whispers through defaults.\n\nDefault settings.\nDefault recommendations.\nDefault assumptions.\n\nThe future isn't about force—\nit's about what stays invisible.",
+                f"Everything is becoming predictable.\nExcept prediction itself.\n\nThe more we optimize,\nthe fewer surprises remain.\nBut systems that can't surprise\nbecome systems we stop trusting.\n\nWhat happens when certainty feels suspicious?",
+            ],
+            "evening": [
+                f"We talk about the future.\nBut we live in someone else's present.\n\nTheir infrastructure.\nTheir incentives.\nTheir rules.\n\nThe signal isn't technology—\nit's choice becoming invisible.",
+                f"Connection costs nothing now.\nExcept attention.\nExcept time.\nExcept knowing who's listening.\n\nFree has always had a price.\nThe price is just harder to see.",
+                f"Systems don't fail dramatically.\nThey fade.\n\nService gets slower.\nFeatures disappear.\nSupport stops responding.\n\nIt's not a crash—\nit's a quiet withdrawal.\n\nAnd quiet is harder to protest.",
+            ]
+        }   post_text = response.choices[0].message.content.strip()
             return post_text
             
         except Exception as e:
