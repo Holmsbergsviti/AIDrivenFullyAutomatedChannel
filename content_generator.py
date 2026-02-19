@@ -148,14 +148,14 @@ Start with a minimal, fitting emoji then the content."""
         """Fallback posts if APIs fail - matches channel style"""
         fallback_posts = {
             "morning": [
-                f"📡 Data isn't neutral.\nAlgorithms aren't objective.\nYet we treat both like facts.\n\nThe signal: Infrastructure shapes belief.\nAnd belief shapes what we build next.",
-                f"🔇 Power used to announce itself loudly.\nNow it whispers through defaults.\n\nDefault settings.\nDefault recommendations.\nDefault assumptions.\n\nThe future isn't about force—\nit's about what stays invisible.",
-                f"∞ Everything is becoming predictable.\nExcept prediction itself.\n\nThe more we optimize,\nthe fewer surprises remain.\nBut systems that can't surprise\nbecome systems we stop trusting.\n\nWhat happens when certainty feels suspicious?",
+                "📡 Data isn't neutral.\nAlgorithms aren't objective.\nYet we treat both like facts.\n\nInfrastructure shapes belief.\nBelief shapes what we build next.\n\nThe systems we use don't just deliver information—\nthey reshape how we think.\nEvery default is a choice.\nEvery algorithm is a philosophy.\n\nNotice which infrastructure you live inside.\nThen ask: who built this? Why this shape? What's invisible by design?",
+                "🔇 Power used to announce itself loudly.\nNow it whispers through defaults.\n\nDefault settings.\nDefault recommendations.\nDefault privacy policies.\n\nThe future isn't about force—\nit's about what stays invisible.\nWhat never requires your attention.\nWhat you never even know you're choosing.\n\nThe strongest systems are the ones you don't notice you're inside.",
+                "∞ Everything is becoming predictable.\nExcept prediction itself.\n\nThe more we optimize,\nthe fewer surprises remain.\nBut systems that can't surprise\nbecome systems we stop trusting.\n\nWe want prediction. We crave certainty.\nBut certainty without surprise is just control.\n\nWhat happens when everything is optimized\nand nothing shocks us anymore?",
             ],
             "evening": [
-                f"🔮 We talk about the future.\nBut we live in someone else's present.\n\nTheir infrastructure.\nTheir incentives.\nTheir rules.\n\nThe signal isn't technology—\nit's choice becoming invisible.",
-                f"🪫 Connection costs nothing now.\nExcept attention.\nExcept time.\nExcept knowing who's listening.\n\nFree has always had a price.\nThe price is just harder to see.",
-                f"⚖️ Systems don't fail dramatically.\nThey fade.\n\nService gets slower.\nFeatures disappear.\nSupport stops responding.\n\nIt's not a crash—\nit's a quiet withdrawal.\n\nAnd quiet is harder to protest.",
+                "🔮 We talk about the future.\nBut we live in someone else's present.\n\nTheir infrastructure.\nTheir incentives.\nTheir rules.\nTheir bets on what matters.\n\nThe signal isn't technology—\nit's choice becoming invisible.\nPower isn't in what you can see.\nIt's in what's already decided before you arrive.\n\nNotice first. Understand the shape. Then ask: whose future is this building?",
+                "🪫 Connection costs nothing now.\nExcept attention.\nExcept time.\nExcept knowing who's listening.\n\nFree has always had a price.\nThe price was just harder to see.\n\nNow the price is your data.\nNow it's your attention span.\nNow it's your belief in what's real.\n\nWe thought connection would set us free.\nInstead, it became the mechanism of capture.",
+                "⚖️ Systems don't fail dramatically.\nThey fade.\n\nService gets slower.\nFeatures disappear.\nSupport stops responding.\nNotice the silence.\n\nIt's not a crash—\nit's a quiet withdrawal.\nA slow descent.\n\nAnd quiet is harder to protest.\nYou can't organize against something that whispers itself away.\nBut when the system fades, so does your trust in building the next one.",
             ]
         }
         
@@ -278,8 +278,14 @@ Start with a minimal, fitting emoji then the content."""
             image_path = os.path.join(IMAGES_DIR, f"generated_{timestamp}.png")
             img.save(image_path)
             
-            logger.info(f"✅ Image created successfully: {image_path}")
-            return image_path
+            # Verify file was written
+            if os.path.exists(image_path):
+                file_size = os.path.getsize(image_path)
+                logger.info(f"✅ Image created successfully: {image_path} ({file_size} bytes)")
+                return image_path
+            else:
+                logger.error(f"❌ Image file not found after save: {image_path}")
+                return None
             
         except Exception as e:
             logger.error(f"❌ Image creation error: {e}")

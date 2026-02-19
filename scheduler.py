@@ -4,6 +4,7 @@ Scheduler - Handles daily posting schedule
 
 import asyncio
 import logging
+import os
 from datetime import datetime, time
 import pytz
 from config import MORNING_POST_TIME, EVENING_POST_TIME, TIMEZONE
@@ -57,16 +58,20 @@ class PostScheduler:
             logger.info("Generating image...")
             image_path = self.content_gen.generate_image(post_text)
             
-            if image_path:
-                logger.info(f"Image generated: {image_path}")
+            # Verify image exists before posting
+            if image_path and os.path.exists(image_path):
+                logger.info(f"✅ Image verified: {image_path}")
+                with_image = True
             else:
-                logger.warning("Image generation failed, posting text only")
+                logger.warning(f"❌ Image not available: {image_path}")
+                image_path = None
+                with_image = False
             
             # Post to Telegram
             success = await self.telegram.post_message(post_text, image_path)
             
             if success:
-                logger.info(f"Successfully posted {time_of_day} content with {'image' if image_path else 'text only'}")
+                logger.info(f"Successfully posted {time_of_day} content with {'image' if with_image else 'text only'}")
                 return True
             else:
                 logger.error(f"Failed to post {time_of_day} content")
