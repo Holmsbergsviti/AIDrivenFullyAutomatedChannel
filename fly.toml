@@ -1,0 +1,30 @@
+# Fly.io Configuration
+# Deploy with: flyctl deploy
+
+app = "signals-bot"
+primary_region = "ams"  # Amsterdam - change to your region
+
+[build]
+  builder = "pacer"
+
+[env]
+  TELEGRAM_BOT_TOKEN = ""
+  TELEGRAM_CHANNEL_ID = "@signalsOfTheFuture"
+  MORNING_POST_TIME = "10:00"
+  EVENING_POST_TIME = "20:00"
+  TIMEZONE = "UTC"
+  USE_DALLE = "false"
+  USE_UNSPLASH = "false"
+
+[[services]]
+  internal_port = 8080
+  processes = ["app"]
+
+  [services.tcp_checks]
+    enabled = true
+    grace_period = "10s"
+    interval = 10000
+    timeout = 2000
+
+[processes]
+  app = "python main.py"
