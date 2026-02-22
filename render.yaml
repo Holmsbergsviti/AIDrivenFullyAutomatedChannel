@@ -1,5 +1,5 @@
 services:
-  - type: web
+  - type: background_worker
     name: signals-bot
     runtime: python
     plan: free
@@ -21,4 +21,4 @@ services:
       - key: USE_DALLE
         value: "false"
       - key: USE_UNSPLASH
-        value: "false"
+        value: "true"
