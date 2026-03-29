@@ -128,7 +128,7 @@ For {time_of_day}.
 Start with a minimal, fitting emoji then the content."""
             
             response = client.chat.completions.create(
-                model="llama2-70b-4096",
+                model="llama-3.3-70b-versatile",
                 messages=[
                     {"role": "system", "content": "You are a keen observer of emerging patterns and quiet changes in the world. You write sharp, layered posts that make people think differently about what's already happening."},
                     {"role": "user", "content": prompt}
