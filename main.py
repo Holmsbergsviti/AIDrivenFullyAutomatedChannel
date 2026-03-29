@@ -7,6 +7,22 @@ import asyncio
 import logging
 import sys
 from pathlib import Path
+from threading import Thread
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "Bot is running!"
+
+def run_web():
+    app.run(host="0.0.0.0", port=8080)
+
+# Start the web server in a separate thread
+Thread(target=run_web, daemon=True).start()
+
+# ...existing code to start your scheduler/bot...
 
 # Create logs directory if it doesn't exist
 logs_dir = Path('logs')
@@ -68,6 +84,8 @@ async def main():
     # Initialize scheduler
     scheduler = get_scheduler()
     
+    # Start the web server in a separate thread
+    Thread(target=run_web, daemon=True).start()
     # Start scheduler
     try:
         await scheduler.run_scheduler()
