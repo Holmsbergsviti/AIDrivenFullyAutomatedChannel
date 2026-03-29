@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 from threading import Thread
 from flask import Flask
+import os
 
 app = Flask(__name__)
 
@@ -17,7 +18,8 @@ def home():
     return "Bot is running!"
 
 def run_web():
-    app.run(host="0.0.0.0", port=8080)
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host="0.0.0.0", port=port)
 
 # Start the web server in a separate thread
 Thread(target=run_web, daemon=True).start()
