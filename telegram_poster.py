@@ -29,6 +29,9 @@ class TelegramPoster:
             Success status
         """
         try:
+            # Truncate caption if too long for Telegram
+            if image_path and len(text) > 1024:
+                text = text[:1020] + "..."
             if image_path:
                 logger.info(f"📸 Attempting to send photo from {image_path}")
                 with open(image_path, "rb") as photo:
